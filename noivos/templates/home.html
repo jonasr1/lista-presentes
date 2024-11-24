@@ -11,7 +11,7 @@
             Crie sua lista de presentes
         </h2>
         <br />
-        <form action="" method="POST">
+        <form action="{% url "home" %}" method="POST" enctype='multipart/form-data'> {% csrf_token %}
             <label class="mt-4 block text-sm leading-6 text-gray-900"
             >Nome do presente</label
             >
@@ -75,63 +75,55 @@
     </div>
 
     <div class="grid grid-cols-5 mt-4 gap-4">
+        {% for i in presentes %}
         <div>
-        <img class="aspect-[3/2] w-full rounded-2xl object-cover" src="" alt="" />
+        <img class="aspect-[3/2] w-full rounded-2xl object-cover" src="{{i.foto.url}}" alt="" />
 
-        <h3 class="mt-2 text-lg font-semibold leading-8 text-gray-900">
-            Air fryer
-        </h3>
-
-        <p class="mt-4 block text-sm leading-6 text-gray-900">
-            Reservado por Caio Sampaio
-        </p>
-
-        <p class="text-base leading-7 text-gray-600"></p>
-
-        <span
-            class="inline-flex items-center rounded-md bg-green-400/10 px-2 py-1 text-xs font-medium text-green-400 ring-1 ring-inset ring-green-400/30"
-            >Pouco importante
+        <h3 class="mt-2 text-lg font-semibold leading-8 text-gray-900">{{i.nome_presente}}</h3>
+        {% if i.reservado %}
+        <p class="mt-4 block text-sm leading-6 text-gray-900">Reservado por {{i.reservado_por}}</p>
+        {% endif %}
+        <!-- Exibir mensagem e classes de importância -->
+        <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ i.style.class }}">
+            {{ i.style.message }}
             <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-            class="size-4 text-green-400"
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                class="size-4 {{ i.style.icon_color }}"
             >
-            <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M6 18 18 6M6 6l12 12"
-            />
+                <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                />
             </svg>
         </span>
-        </div>
     </div>
+    {% endfor %}
     </div>
+</div>
 
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-            const ctx = document.getElementById('myChart');
-        
-            new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Não reservado', 'Reservado'],
-                datasets: [{
+<div>
+    <canvas id="myChart"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('myChart');
+    new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Não reservado', 'Reservado'],
+            datasets: [{
                 label: 'Presentes',
-                data: [5, 6],
+                data: {{ data|safe }},
                 borderWidth: 1
-                }]
-            },
-            options: {
-                scales: {
-                y: {
-                    beginAtZero: true
-                }
-                }
-            }
-            });
-        </script>
-    
+            }]
+        },
+        options: {}
+    });
+</script>
 {% endblock %}
