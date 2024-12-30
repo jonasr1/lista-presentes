@@ -16,6 +16,9 @@ def main():
             "forget to activate a virtual environment?"
         ) from exc
     execute_from_command_line(sys.argv)
+    if len(sys.argv) == 1:
+        sys.argv.extend(['runserver', '8000'])  # Define porta padrão como 8000
+    execute_from_command_line(sys.argv)
 
 
 if __name__ == '__main__':
