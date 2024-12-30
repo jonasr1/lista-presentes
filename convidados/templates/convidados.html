@@ -3,9 +3,33 @@
 {% block 'body' %}
     <div class="max-w-7xl mx-auto mt-12">
         <div class="mx-auto max-w-2xl text-center">
-
             <h2 class="text-balance text-4xl font-semibold tracking-tight text-gray-900 sm:text-5xl">Olá, {{convidado.nome_convidado}}</h2>
-            
+
+        {% if messages %}
+            <div class="mt-5">
+                <div class="space-y-4">
+                    {% for message in messages %}
+                        <div class="px-4 py-3 rounded shadow text-white 
+                            {% if 'success' in message.tags %}
+                                bg-green-100 border border-green-500 text-green-700 px-4 py-3 rounded
+                            {% elif 'error' in message.tags %}
+                                bg-red-100 border border-red-500 text-red-700 px-4 py-3 rounded
+                            {% elif 'warning' in message.tags %}
+                                bg-yellow-100 border border-yellow-500 text-yellow-700 px-4 py-3 rounded
+                            {% elif 'info' in message.tags %}
+                                bg-blue-100 border border-blue-500 text-blue-700 px-4 py-3 rounded
+                            {% else %}
+                                bg-gray-100 border border-gray-500 text-black-700 px-4 py-3 rounded
+                            {% endif %}"
+                            role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        
+
             {% if convidado.status == 'AC' %}
                 <p class="mt-2 text-lg leading-8 text-gray-600">Confirme sua presença no casamento: <a href="{% url 'responder_presenca' %}?resposta=C&token={{convidado.token}}" class="text-green-400">confirmar</a>, <a href="{% url 'responder_presenca' %}?resposta=R&token={{convidado.token}}" class="text-red-400">recusar</a></p>
                 {% elif convidado.status == 'C' %}
@@ -61,7 +85,9 @@
             <div class="bg-slate-200/20 p-6 rounded-md mt-4  drop-shadow-lg ring-1 ring-gray-600/20">
                 
                 <h2 class="text-balance text-xl font-semibold tracking-tight text-gray-900 text-center">Adicione seus acompanhantes</h2>
-                <form action="" method="POST">
+                <form action="adicionar_acompanhantes" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="token" value="{{ convidado.token }}">
                     <label class="mt-4 block text-sm leading-6 text-gray-900">Nome</label>
                     <input type="text" name="nome" class="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6">
                     <input type="submit" class="rounded-md mt-4 bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 cursor-pointer" value="Adicionar">
@@ -71,13 +97,14 @@
                 <hr>
                 <br>
                 <ul>
-                    
-                        <li class="bg-slate-100 p-4">
-                            Caio Sampaio
-
-                        </li>
-                        <br>
-                    
+                    {% for acompanhante in acompanhantes %}
+                    <li class="bg-slate-100 p-4">{{acompanhante.nome}}</li>
+                    <br>
+                    {% empty %}
+                    <li class="mt-4 block w-full rounded-md px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 sm:text-sm sm:leading-6">
+                        Nenhum acompanhante registrado. Fique à vontade para adicionar um!
+                    </li>
+                    {% endfor %}
                 </ul>
 
             </div>  
@@ -86,5 +113,4 @@
         
         
     </div>
-       
 {% endblock %}
