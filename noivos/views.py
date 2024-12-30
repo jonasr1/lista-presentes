@@ -1,5 +1,5 @@
 from typing import List
-from django.shortcuts import redirect, render
+from django.shortcuts import get_object_or_404, redirect, render
 from django.http import HttpRequest, HttpResponse
 
 from noivos.styles import IMPORTANCIA_STYLES
@@ -49,8 +49,9 @@ def lista_convidados(request: HttpRequest) -> HttpResponse:
             whatsapp=whatsapp,
             maximo_acompanhantes=maximo_acompanhantes
         )
-        convidados.save()
+        convidados.save() # type: ignore
         return redirect('lista_convidados')
+
 
 def add_styles_to_presentes(presentes: List[Presentes]) -> List[Presentes]:
     for presente in presentes:
